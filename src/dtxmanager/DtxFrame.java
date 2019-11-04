@@ -1,6 +1,5 @@
 package dtxmanager;
 
-import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
@@ -1605,6 +1604,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         mniHexaEdit.setEnabled(false);
         mniCopyArray.setEnabled(false);
         jmiSplitEvenly.setEnabled(false);
+        jmiReplaceRunInit.setEnabled(false);
 
         if (rightSel > 1) {
             mniMerge.setEnabled(true);
@@ -1615,7 +1615,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
             btnExportModif.setEnabled(true);
             btnExportModifHeader.setEnabled(true);
             btnRemove.setEnabled(true);
-
+            jmiReplaceRunInit.setEnabled(true);
         }
 
         if (rightSel == 1) {
