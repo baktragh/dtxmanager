@@ -136,7 +136,15 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mniLdaStaActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JSeparator" name="jSeparator4">
+            <MenuItem class="javax.swing.JMenuItem" name="jmiReplaceRunInit">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Replace RUN/INIT with code"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jmiReplaceRunInitActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator7">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="mniTurboVersion">
               <Properties>
@@ -144,7 +152,7 @@
                   <KeyStroke key="F11"/>
                 </Property>
                 <Property name="mnemonic" type="int" value="116"/>
-                <Property name="text" type="java.lang.String" value="Make turbo version"/>
+                <Property name="text" type="java.lang.String" value="Make monolithic binary"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="onMakeTurboVersion"/>
@@ -183,14 +191,6 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jmiSplitEvenlyActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="jmiReplaceRunInit">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Replace RUN/INIT with code"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jmiReplaceRunInitActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>

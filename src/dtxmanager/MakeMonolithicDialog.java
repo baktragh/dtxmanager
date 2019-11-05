@@ -12,12 +12,12 @@ import javax.swing.JOptionPane;
 /**
  *
  */
-public class MakeTurboDialog extends javax.swing.JDialog {
+public class MakeMonolithicDialog extends javax.swing.JDialog {
 
     /**
      * Creates new form MakeTurboDialog
      */
-    public MakeTurboDialog() {
+    public MakeMonolithicDialog() {
         initComponents();
     }
 
@@ -43,11 +43,12 @@ public class MakeTurboDialog extends javax.swing.JDialog {
         jcbExtraCode = new javax.swing.JCheckBox();
         jLabel1 = new javax.swing.JLabel();
         jlbLength = new javax.swing.JLabel();
+        pFiller = new javax.swing.JPanel();
 
-        setTitle("Turbo version");
+        setTitle("Monolithic binary file");
         setModal(true);
 
-        btnOk.setText("Make turbo version");
+        btnOk.setText("Make monolithic binary");
         btnOk.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 OnMakeTurboVersion(evt);
@@ -72,7 +73,6 @@ public class MakeTurboDialog extends javax.swing.JDialog {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weighty = 0.2;
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
         pControls.add(jLabel2, gridBagConstraints);
 
@@ -84,11 +84,10 @@ public class MakeTurboDialog extends javax.swing.JDialog {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.2;
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
         pControls.add(jtfOutFile, gridBagConstraints);
 
-        btnBrowse.setText("Browse");
+        btnBrowse.setText("Browse...");
         btnBrowse.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnBrowseActionPerformed(evt);
@@ -98,7 +97,6 @@ public class MakeTurboDialog extends javax.swing.JDialog {
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weighty = 0.2;
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
         pControls.add(btnBrowse, gridBagConstraints);
 
@@ -107,18 +105,15 @@ public class MakeTurboDialog extends javax.swing.JDialog {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weighty = 0.2;
         gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 3);
         pControls.add(jLabel3, gridBagConstraints);
 
         jtfExtraCode.setColumns(6);
+        jtfExtraCode.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.2;
         gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 3);
         pControls.add(jtfExtraCode, gridBagConstraints);
 
@@ -132,7 +127,6 @@ public class MakeTurboDialog extends javax.swing.JDialog {
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weighty = 0.2;
         pControls.add(jcbExtraCode, gridBagConstraints);
 
         jLabel1.setText("Extra code length:");
@@ -150,6 +144,16 @@ public class MakeTurboDialog extends javax.swing.JDialog {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
         pControls.add(jlbLength, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        pControls.add(pFiller, gridBagConstraints);
 
         getContentPane().add(pControls, java.awt.BorderLayout.CENTER);
 
@@ -186,7 +190,7 @@ public class MakeTurboDialog extends javax.swing.JDialog {
         }
 
         try {
-            DtxManager.ae2.makeTurboVersion(eadr, b, s);
+            DtxManager.ae2.makeMonolithicBinary(eadr, b, s);
         }
         catch (Exception e) {
             warning(e);
@@ -213,7 +217,7 @@ public class MakeTurboDialog extends javax.swing.JDialog {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MakeTurboDialog().setVisible(true);
+                new MakeMonolithicDialog().setVisible(true);
             }
         });
     }
@@ -232,6 +236,7 @@ public class MakeTurboDialog extends javax.swing.JDialog {
     private javax.swing.JTextField jtfOutFile;
     private javax.swing.JPanel pButtons;
     private javax.swing.JPanel pControls;
+    private javax.swing.JPanel pFiller;
     // End of variables declaration//GEN-END:variables
 
     void warning(Exception e) {

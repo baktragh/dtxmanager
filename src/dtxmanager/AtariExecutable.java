@@ -746,7 +746,7 @@ public class AtariExecutable extends AbstractTableModel {
     /**
      * Vytvori turbo verzi ze souboru
      */
-    public void makeTurboVersion(int extraAddress, boolean extraCode, String outFile) throws AtariExecutableException {
+    public void makeMonolithicBinary(int extraAddress, boolean extraCode, String outFile) throws AtariExecutableException {
 
         int originalRunAdr = -1;
 

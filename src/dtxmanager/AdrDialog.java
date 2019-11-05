@@ -85,7 +85,7 @@ public class AdrDialog extends javax.swing.JDialog {
 
         jLabel1.setText("Section start:");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(3, 5, 3, 5);
         pDataSection.add(jLabel1, gridBagConstraints);
 
@@ -93,12 +93,12 @@ public class AdrDialog extends javax.swing.JDialog {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(3, 5, 3, 5);
         pDataSection.add(jLabel2, gridBagConstraints);
 
         jtfStart.setColumns(24);
-        jtfStart.setFont(new java.awt.Font("Monospaced", 0, 14));
+        jtfStart.setFont(new java.awt.Font("Monospaced", 0, 14)); // NOI18N
         jtfStart.setText("0");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
@@ -108,7 +108,7 @@ public class AdrDialog extends javax.swing.JDialog {
         pDataSection.add(jtfStart, gridBagConstraints);
 
         jtfEnd.setColumns(24);
-        jtfEnd.setFont(new java.awt.Font("Monospaced", 0, 14));
+        jtfEnd.setFont(new java.awt.Font("Monospaced", 0, 14)); // NOI18N
         jtfEnd.setText("0");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -119,7 +119,7 @@ public class AdrDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(3, 5, 3, 5);
         pDataSection.add(jtfEnd, gridBagConstraints);
 
-        btnAutoEnd.setFont(new java.awt.Font("Dialog", 0, 10));
+        btnAutoEnd.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
         btnAutoEnd.setText("Auto end");
         btnAutoEnd.setToolTipText("Automatically count section end using section data length");
         btnAutoEnd.addActionListener(new java.awt.event.ActionListener() {
@@ -139,7 +139,7 @@ public class AdrDialog extends javax.swing.JDialog {
 
         jLabel3.setText("RUN:");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(3, 5, 3, 5);
         pJumpSection.add(jLabel3, gridBagConstraints);
 
@@ -147,12 +147,12 @@ public class AdrDialog extends javax.swing.JDialog {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(3, 5, 3, 5);
         pJumpSection.add(jLabel4, gridBagConstraints);
 
         jtfJump.setColumns(24);
-        jtfJump.setFont(new java.awt.Font("Monospaced", 0, 14));
+        jtfJump.setFont(new java.awt.Font("Monospaced", 0, 14)); // NOI18N
         jtfJump.setText("0");
         jtfJump.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -167,7 +167,7 @@ public class AdrDialog extends javax.swing.JDialog {
         pJumpSection.add(jtfJump, gridBagConstraints);
 
         jtfJump2.setColumns(24);
-        jtfJump2.setFont(new java.awt.Font("Monospaced", 0, 14));
+        jtfJump2.setFont(new java.awt.Font("Monospaced", 0, 14)); // NOI18N
         jtfJump2.setText("0");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;

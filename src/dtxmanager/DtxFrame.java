@@ -94,14 +94,14 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         mniChangeMove = new javax.swing.JMenuItem();
         mniMerge = new javax.swing.JMenuItem();
         mniLdaSta = new javax.swing.JMenuItem();
-        jSeparator4 = new javax.swing.JSeparator();
+        jmiReplaceRunInit = new javax.swing.JMenuItem();
+        jSeparator7 = new javax.swing.JPopupMenu.Separator();
         mniTurboVersion = new javax.swing.JMenuItem();
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         mniHexaEdit = new javax.swing.JMenuItem();
         mniCopyArray = new javax.swing.JMenuItem();
         jSeparator6 = new javax.swing.JPopupMenu.Separator();
         jmiSplitEvenly = new javax.swing.JMenuItem();
-        jmiReplaceRunInit = new javax.swing.JMenuItem();
         mnuHelp = new javax.swing.JMenu();
         mniAbout = new javax.swing.JMenuItem();
 
@@ -608,11 +608,19 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
             }
         });
         mnuSpecial.add(mniLdaSta);
-        mnuSpecial.add(jSeparator4);
+
+        jmiReplaceRunInit.setText("Replace RUN/INIT with code");
+        jmiReplaceRunInit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiReplaceRunInitActionPerformed(evt);
+            }
+        });
+        mnuSpecial.add(jmiReplaceRunInit);
+        mnuSpecial.add(jSeparator7);
 
         mniTurboVersion.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F11, 0));
         mniTurboVersion.setMnemonic('t');
-        mniTurboVersion.setText("Make turbo version");
+        mniTurboVersion.setText("Make monolithic binary");
         mniTurboVersion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 onMakeTurboVersion(evt);
@@ -648,14 +656,6 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
             }
         });
         mnuSpecial.add(jmiSplitEvenly);
-
-        jmiReplaceRunInit.setText("Replace RUN/INIT with code");
-        jmiReplaceRunInit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jmiReplaceRunInitActionPerformed(evt);
-            }
-        });
-        mnuSpecial.add(jmiReplaceRunInit);
 
         jMenuBar1.add(mnuSpecial);
 
@@ -1483,9 +1483,9 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
-    private javax.swing.JSeparator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
+    private javax.swing.JPopupMenu.Separator jSeparator7;
     private javax.swing.JMenuItem jmiReplaceRunInit;
     private javax.swing.JMenuItem jmiSplitEvenly;
     private javax.swing.JSplitPane jsppSplitter;

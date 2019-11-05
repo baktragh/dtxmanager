@@ -13,8 +13,7 @@ public class DtxManager {
     static DtxFrame frmDtx;
     static AdrDialog dlgAdr;
     static MovDialog dlgMov;
-    static MakeTurboDialog dlgTurbo;
-    static DocumentationFrame frmDocu;
+    static MakeMonolithicDialog dlgTurbo;
     static HexaEditorDialog frmHexa;
 
     static JFileChooser fcXex;
@@ -49,12 +48,9 @@ public class DtxManager {
         dlgMov = new MovDialog();
         dlgMov.pack();
         centerContainer(dlgMov);
-        dlgTurbo = new MakeTurboDialog();
+        dlgTurbo = new MakeMonolithicDialog();
         dlgTurbo.pack();
         centerContainer(dlgTurbo);
-        frmDocu = new DocumentationFrame();
-        frmDocu.pack();
-        centerContainer(frmDocu);
         frmHexa = new HexaEditorDialog();
         frmHexa.pack();
         centerContainer(frmHexa);
