@@ -80,7 +80,7 @@ public class DtxManager {
 
     public static void moveSectionToMofidied(Section s) {
         /*Clone section*/
-        
+
         try {
             Section sn = (Section) s.clone();
             ae2.addSection(sn);
@@ -103,7 +103,6 @@ public class DtxManager {
         c.setLocation(_x, _y);
     }
 
-    
     public static void saveProject(String filename) throws Exception {
         FileOutputStream fos = new FileOutputStream(filename);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -113,13 +112,22 @@ public class DtxManager {
 
     }
 
-    
     public static void loadProject(String filename) throws Exception {
         FileInputStream fis = new FileInputStream(filename);
         ObjectInputStream ois = new ObjectInputStream(fis);
-        ArrayList<Section> al = ((ArrayList<Section>)((ArrayList)ois.readObject()));
+
+        /*Get non-generic*/
+        ArrayList al = ((ArrayList) ois.readObject());
+
+        /*Convert to generic list*/
+        ArrayList<Section> al2 = new ArrayList<>();
+        for (Object e : al) {
+            Section s = (Section) e;
+            al2.add(s);
+        }
+
         ae2.clear();
-        ae2.setAllSections(al);
+        ae2.setAllSections(al2);
         ois.close();
     }
 

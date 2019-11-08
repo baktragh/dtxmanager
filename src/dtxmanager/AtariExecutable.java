@@ -16,7 +16,6 @@ class AtariExecutableException extends Exception {
         this.msg = msg;
     }
 
-    
     public String getMessage() {
         return msg;
     }
@@ -35,7 +34,6 @@ public class AtariExecutable extends AbstractTableModel {
      * File on the disk
      */
     private String filename;
-    
 
     /**
      * List of all sections
@@ -95,16 +93,15 @@ public class AtariExecutable extends AbstractTableModel {
      */
     public void analyze(boolean full) throws IOException, AtariExecutableException {
 
-
         RandomAccessFile raf;
         raf = new RandomAccessFile(filename, "r");
-        
+
         /*Check for 16 MB*/
-        if (raf.length()>16*1024*1024) {
+        if (raf.length() > 16 * 1024 * 1024) {
             throw new AtariExecutableException("Binary load file exceeds 16 MB");
         }
-        
-        if (raf.length()<3) {
+
+        if (raf.length() < 3) {
             throw new AtariExecutableException("Binary load file is too small to be a binary load file");
         }
 
@@ -154,84 +151,86 @@ public class AtariExecutable extends AbstractTableModel {
             pos++;
             b2 = fileData[pos];
             pos++;
-            w1 = b2 * 256 + b1;   
+            w1 = b2 * 256 + b1;
             b1 = fileData[pos];
             pos++;
             b2 = fileData[pos];
             pos++;
-            w2 = b2 * 256 + b1;   
-            
+            w2 = b2 * 256 + b1;
+
             /*Check for negative segment size*/
-            if (w1>w2) {
+            if (w1 > w2) {
                 throw new AtariExecutableException("Negative segment size");
             }
-            
+
             /*Get length*/
-            w3 = w2 - w1 + 1;     
+            w3 = w2 - w1 + 1;
 
             try {
-            
-            /*Is that pure INIT?*/
-            if (w3 == 2 && w1 == 738 && w2 == 739) {
-                /*Get the INIT vector*/
-                b1 = fileData[pos];
-                pos++;
-                b2 = fileData[pos];
-                pos++;
-                w4 = b2 * 256 + b1;
-                Section ns = new Section(w1, w2, Section.INIT_SECTION, w4);
-                this.allSections.add(ns);
-                continue;
-            }
 
-            /*Is that pure run?*/
-            if (w3 == 2 && w1 == 736 && w2 == 737) {
-                /*Get the RUN vector*/
-                b1 = fileData[pos];
-                pos++;
-                b2 = fileData[pos];
-                pos++;
-                w4 = b2 * 256 + b1;
-                Section ns = new Section(w1, w2, Section.RUN_SECTION, w4);
-                this.allSections.add(ns);
-                continue;
-            }
+                /*Is that pure INIT?*/
+                if (w3 == 2 && w1 == 738 && w2 == 739) {
+                    /*Get the INIT vector*/
+                    b1 = fileData[pos];
+                    pos++;
+                    b2 = fileData[pos];
+                    pos++;
+                    w4 = b2 * 256 + b1;
+                    Section ns = new Section(w1, w2, Section.INIT_SECTION, w4);
+                    this.allSections.add(ns);
+                    continue;
+                }
 
-            /*Is it RUN+INIT*/
-            if (w3 == 4 && w1 == 736 && w2 == 739) {
-                /*Get vectors*/
-                b1 = fileData[pos];
-                pos++;
-                b2 = fileData[pos];
-                pos++;
-                w4 = b2 * 256 + b1;
-                int bkp = w4;
-                b1 = fileData[pos];
-                pos++;
-                b2 = fileData[pos];
-                pos++;
-                w4 = b2 * 256 + b1;
-                Section ens = new Section(w1, w2, Section.RUNINIT_SECTION, bkp, w4);
-                this.allSections.add(ens);
-                continue;
+                /*Is that pure run?*/
+                if (w3 == 2 && w1 == 736 && w2 == 737) {
+                    /*Get the RUN vector*/
+                    b1 = fileData[pos];
+                    pos++;
+                    b2 = fileData[pos];
+                    pos++;
+                    w4 = b2 * 256 + b1;
+                    Section ns = new Section(w1, w2, Section.RUN_SECTION, w4);
+                    this.allSections.add(ns);
+                    continue;
+                }
 
-            }
+                /*Is it RUN+INIT*/
+                if (w3 == 4 && w1 == 736 && w2 == 739) {
+                    /*Get vectors*/
+                    b1 = fileData[pos];
+                    pos++;
+                    b2 = fileData[pos];
+                    pos++;
+                    w4 = b2 * 256 + b1;
+                    int bkp = w4;
+                    b1 = fileData[pos];
+                    pos++;
+                    b2 = fileData[pos];
+                    pos++;
+                    w4 = b2 * 256 + b1;
+                    Section ens = new Section(w1, w2, Section.RUNINIT_SECTION, bkp, w4);
+                    this.allSections.add(ens);
+                    continue;
 
-            /*Just common section*/
-            Section s;
-            s = new Section(w1, w2, Section.COMMON_SECTION);
-            this.allSections.add(s);
-            for (int i = 0; i < w3; i++) {
-                s.data[i] = fileData[pos + i];
-            }
-            pos += w3;
+                }
+
+                /*Just common section*/
+                Section s;
+                s = new Section(w1, w2, Section.COMMON_SECTION);
+                this.allSections.add(s);
+                for (int i = 0; i < w3; i++) {
+                    s.data[i] = fileData[pos + i];
+                }
+                pos += w3;
             }
             catch (ArrayIndexOutOfBoundsException aiobe) {
-                
+
                 String detail = aiobe.getClass().getName();
-                if (aiobe.getMessage()!=null) detail+=": "+aiobe.getMessage();
-                
-                throw new AtariExecutableException("Binary load file has corrupted structure "+detail);
+                if (aiobe.getMessage() != null) {
+                    detail += ": " + aiobe.getMessage();
+                }
+
+                throw new AtariExecutableException("Binary load file has corrupted structure " + detail);
             }
 
         }/*End of while*/
@@ -250,10 +249,11 @@ public class AtariExecutable extends AbstractTableModel {
 
     /**
      * Export section to file with or without header
+     *
      * @param index Index of section
      * @param fname Output file name
      * @param header Indicates whether to export header or not
-     * @throws Exception 
+     * @throws Exception
      */
     void exportSection(int index, String fname, boolean header) throws Exception {
 
@@ -437,7 +437,7 @@ public class AtariExecutable extends AbstractTableModel {
         dta.add(72);
         /*Pusth A*/
 
-        /*Looking for values*/
+ /*Looking for values*/
         for (int v = 0; v < 256; v++) {
             boolean first = true;
             for (int a = ss.start; a <= ss.stop; a++) {
@@ -544,11 +544,10 @@ public class AtariExecutable extends AbstractTableModel {
     /**
      * Split a section
      */
-    void splitSection(int idx, int fosp) throws AtariExecutableException,CloneNotSupportedException {
+    void splitSection(int idx, int fosp) throws AtariExecutableException, CloneNotSupportedException {
         Section s = getSection(idx);
-        
-        /*Check range*/
 
+        /*Check range*/
         if (s.type == Section.COMMON_SECTION) {
             if (fosp <= s.start || fosp > s.stop) {
                 throw new AtariExecutableException("First address of second part out of range");
@@ -693,10 +692,10 @@ public class AtariExecutable extends AbstractTableModel {
     /*Kod pro presun bloku pameti*/
     static int moveblock[] = {
         0xFF, 0xFF, 0x0, 0x20, 0x84, 0x20, 0x48, 0x8, 0x78, 0xAD, 0xE, 0xD4, 0x48, 0xA9, 0x0, 0x8D, 0xE, 0xD4, 0xAD, 0x1, 0xD3, 0x48, 0x29, 0xFE, 0x8D, 0x1, 0xD3, 0xA5, 0x80, 0x8D, 0xFA, 0xFF,
-         0xA5, 0x81, 0x8D, 0xFB, 0xFF, 0xA5, 0x82, 0x8D, 0xFE, 0xFF, 0xA5, 0x83, 0x8D, 0xFF, 0xFF, 0xA9, 0x47, 0x85, 0x80, 0xA9, 0x59, 0x85, 0x81, 0xA9, 0x2, 0x8D, 0xFC, 0xFF, 0xA9, 0x1, 0x8D, 0xFD,
-         0xFF, 0xA9, 0x0, 0x85, 0x82, 0xA9, 0x40, 0x85, 0x83, 0xA0, 0x0, 0xB1, 0x80, 0x91, 0x82, 0xCE, 0xFC, 0xFF, 0xAE, 0xFC, 0xFF, 0xE0, 0xFF, 0xD0, 0xA, 0xCE, 0xFD, 0xFF, 0xAE, 0xFD, 0xFF, 0xE0,
-         0xFF, 0xF0, 0x9, 0xC8, 0xD0, 0xE5, 0xE6, 0x81, 0xE6, 0x83, 0xD0, 0xDF, 0x68, 0x8D, 0x1, 0xD3, 0x68, 0x8D, 0xE, 0xD4, 0xAD, 0xFA, 0xFF, 0x85, 0x80, 0xAD, 0xFB, 0xFF, 0x85, 0x81, 0xAD, 0xFE,
-         0xFF, 0x85, 0x82, 0xAD, 0xFF, 0xFF, 0x85, 0x83, 0x28, 0x68, 0x60
+        0xA5, 0x81, 0x8D, 0xFB, 0xFF, 0xA5, 0x82, 0x8D, 0xFE, 0xFF, 0xA5, 0x83, 0x8D, 0xFF, 0xFF, 0xA9, 0x47, 0x85, 0x80, 0xA9, 0x59, 0x85, 0x81, 0xA9, 0x2, 0x8D, 0xFC, 0xFF, 0xA9, 0x1, 0x8D, 0xFD,
+        0xFF, 0xA9, 0x0, 0x85, 0x82, 0xA9, 0x40, 0x85, 0x83, 0xA0, 0x0, 0xB1, 0x80, 0x91, 0x82, 0xCE, 0xFC, 0xFF, 0xAE, 0xFC, 0xFF, 0xE0, 0xFF, 0xD0, 0xA, 0xCE, 0xFD, 0xFF, 0xAE, 0xFD, 0xFF, 0xE0,
+        0xFF, 0xF0, 0x9, 0xC8, 0xD0, 0xE5, 0xE6, 0x81, 0xE6, 0x83, 0xD0, 0xDF, 0x68, 0x8D, 0x1, 0xD3, 0x68, 0x8D, 0xE, 0xD4, 0xAD, 0xFA, 0xFF, 0x85, 0x80, 0xAD, 0xFB, 0xFF, 0x85, 0x81, 0xAD, 0xFE,
+        0xFF, 0x85, 0x82, 0xAD, 0xFF, 0xFF, 0x85, 0x83, 0x28, 0x68, 0x60
     };
 
     static final int IDX_SRC_LO = 48;
@@ -901,13 +900,13 @@ public class AtariExecutable extends AbstractTableModel {
             retVal.saveFile(outFile, idxs, true);
         }
         catch (Exception e) {
-            
+
             String msg = e.getClass().getName();
-            
-            if (e.getMessage()!=null) {
-                msg+=":"+e.getMessage();
+
+            if (e.getMessage() != null) {
+                msg += ":" + e.getMessage();
             }
-            throw new AtariExecutableException("Unable to save file "+msg);
+            throw new AtariExecutableException("Unable to save file " + msg);
         }
 
     }

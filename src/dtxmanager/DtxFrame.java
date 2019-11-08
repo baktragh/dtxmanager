@@ -785,7 +785,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
                 return;
             }
 
-            int fosp = 0;
+            int fosp;
             try {
                 fosp = Integer.parseInt(nwnm);
                 saveSelection();
@@ -1168,8 +1168,9 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         /*Save it*/
         try {
             DtxManager.ae2.saveFile(f.getAbsolutePath(), si, true);
-            TitledBorder tb = (TitledBorder)pModified.getBorder();
-            tb.setTitle("Project ("+f.getName()+")");
+            TitledBorder tb = (TitledBorder) pModified.getBorder();
+            tb.setTitle("Project (" + f.getName() + ")");
+            pModified.repaint();
 
         }
         catch (Exception e) {
@@ -1221,14 +1222,16 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
             DtxManager.ae1.analyze(true);
             this.jtbOriginal.setModel(DtxManager.ae1);
             updateColumnParams();
-            TitledBorder tb = (TitledBorder)pOriginal.getBorder();
-            tb.setTitle("Section buffer ("+f.getName()+")");
+            TitledBorder tb = (TitledBorder) pOriginal.getBorder();
+            tb.setTitle("Section buffer (" + f.getName() + ")");
+            pOriginal.repaint();
         }
         catch (Exception e) {
             e.printStackTrace();
             DtxManager.ae1.clear();
-            TitledBorder tb = (TitledBorder)pOriginal.getBorder();
+            TitledBorder tb = (TitledBorder) pOriginal.getBorder();
             tb.setTitle("Section buffer ( )");
+            pOriginal.repaint();
             warning(e);
 
         }
@@ -1628,10 +1631,12 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
 
     }
 
+    @Override
     public void valueChanged(ListSelectionEvent arg0) {
         updateEnableDisable();
     }
 
+    @Override
     public void tableChanged(TableModelEvent arg0) {
         updateEnableDisable();
     }

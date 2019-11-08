@@ -246,9 +246,11 @@ public class HexaEditorDialog extends javax.swing.JDialog {
             dataPos++;
 
             if (linePos == numbersPerRow || dataPos == data.length) {
-                
-                int paddingSpaces = (numbersPerRow-linePos)*(dataBase==10?4:3);
-                for (int i=0;i<paddingSpaces;i++) sb.append(' ');
+
+                int paddingSpaces = (numbersPerRow - linePos) * (dataBase == 10 ? 4 : 3);
+                for (int i = 0; i < paddingSpaces; i++) {
+                    sb.append(' ');
+                }
                 sb.append(" | ").append(txtBuilder);
                 sb.append(System.getProperty("line.separator"));
                 linePos = 0;
@@ -257,7 +259,7 @@ public class HexaEditorDialog extends javax.swing.JDialog {
         }
         jtaHexView.setText(sb.toString());
         jtaHexView.setCaretPosition(0);
-        
+
     }
 
 }
