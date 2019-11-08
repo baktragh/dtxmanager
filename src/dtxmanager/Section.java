@@ -5,49 +5,49 @@ import java.io.*;
 public class Section implements Cloneable, Serializable {
 
     /**
-     * Datova sekce
+     * Data section
      */
     static final int COMMON_SECTION = 0;
     /**
-     * INIT SEKCE
+     * INIT section
      */
     static final int INIT_SECTION = 1;
     /**
-     * RUN SEKCE
+     * RUN section
      */
     static final int RUN_SECTION = 2;
     /**
-     * RUN/INIT SEKCE
+     * RUN+INIT section
      */
     static final int RUNINIT_SECTION = 3;
     /**
-     * MOVEBLOCK sekce
+     * MOVEBLOCK special section
      */
     static final int MOVEBLOCK_SECTION = 4;
 
     /**
-     * Retezcove oznaceni typu sekci
+     * Strings for section types
      */
-    static final String[] typeStrings = {"DATA", "INIT", "RUN", "RUNINIT", "MVB"};
+    static final String[] SECTION_TYPE_STRINGS = {"DATA", "INIT", "RUN", "RUNINIT", "MVB"};
 
     /**
-     * Pocatecni adresa
+     * Start address
      */
     int start;
     /**
-     * Koncova adresa
+     * End address
      */
     int stop;
     /**
-     * Typ sekce
+     * Section type
      */
     int type;
     /**
-     * Adresa odskoku pro inicializacni a spousteci sekce
+     * Jump address for RUN and INIT
      */
     int jump;
     /**
-     * Adresa odskoku 2, jen pro RUN/INIT sekce
+     * Second jump address for RUN+INIT
      */
     int jump2;
 
@@ -56,21 +56,21 @@ public class Section implements Cloneable, Serializable {
     int mvbTarget;
 
     /**
-     * Data sekce
+     * Data of the section
      */
     int[] data;
 
     /**
-     * Komentar
+     * Comment
      */
     String comment;
 
     /**
-     * Nova instance
+     * Create new section
      *
-     * @param s Pocatecni adresa sekce
-     * @param st Koncova adresa sekce
-     * @param t Typ sekce
+     * @param s First address
+     * @param st Last address
+     * @param t Section type
      */
     Section(int s, int st, int t) {
         this(s, st, t, 0, 0);
@@ -79,10 +79,10 @@ public class Section implements Cloneable, Serializable {
     /**
      * Nova instance
      *
-     * @param s Pocatecni adresa sekce
-     * @param st Koncova adresa sekce
-     * @param t Typ sekce
-     * @param j Skokova adresa
+     * @param s First address
+     * @param st Last address
+     * @param t Section type
+     * @param j Jump address
      */
     Section(int s, int st, int t, int j) {
         this(s, st, t, j, 0);
@@ -99,14 +99,14 @@ public class Section implements Cloneable, Serializable {
     }
 
     /**
-     * retezcova reprezentace sekce
+     * Get string representation of a Section
      *
-     * @return retezcova reprezentace
+     * @return String representation
      */
     public String toString() {
         String s1 = Integer.toString(start);
         String s2 = Integer.toString(stop);
-        String s4 = typeStrings[type];
+        String s4 = SECTION_TYPE_STRINGS[type];
         String s3 = "";
         switch (this.type) {
             case (Section.INIT_SECTION): {
@@ -129,14 +129,12 @@ public class Section implements Cloneable, Serializable {
     }
 
     /**
-     * Klonovani sekce. Hluboka kopie
+     * Create deep copy
      */
-    public Object clone() {
+    public Object clone() throws CloneNotSupportedException {
         Section r = new Section(this.start, this.stop, this.type, this.jump, this.jump2);
-        for (int i = 0; i < data.length; i++) {
-            r.data[i] = data[i];
-        }
-        r.comment = new String(comment);
+        System.arraycopy(data, 0, r.data, 0, data.length);
+        r.comment = comment;
         return r;
     }
 

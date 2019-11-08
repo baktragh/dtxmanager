@@ -12,7 +12,7 @@ import javax.swing.*;
  */
 public class AdrDialog extends javax.swing.JDialog {
 
-    /*Stisknuto cancel nebo OK*/
+    /*Result - OK or Cancel*/
     public int result = 0;
 
     private int sec_start;

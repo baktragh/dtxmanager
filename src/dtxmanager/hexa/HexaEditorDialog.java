@@ -1,13 +1,7 @@
-/*
- * HexaEditorDialog.java
- *
- * Created on 27. leden 2008, 17:35
- */
 package dtxmanager.hexa;
 
-/**
- *
- */
+import java.awt.event.ItemEvent;
+
 public class HexaEditorDialog extends javax.swing.JDialog {
 
     private int[] data;
@@ -60,6 +54,9 @@ public class HexaEditorDialog extends javax.swing.JDialog {
         setTitle("Hexadecimal");
         setModal(true);
 
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
         jtaHexView.setEditable(false);
         jtaHexView.setColumns(80);
         jtaHexView.setRows(20);
@@ -91,6 +88,7 @@ public class HexaEditorDialog extends javax.swing.JDialog {
         mnuView.add(jSeparator1);
 
         btgData.add(mniDataHexa);
+        mniDataHexa.setMnemonic('x');
         mniDataHexa.setSelected(true);
         mniDataHexa.setText("Hexadecimal data");
         mniDataHexa.addItemListener(new java.awt.event.ItemListener() {
@@ -101,6 +99,7 @@ public class HexaEditorDialog extends javax.swing.JDialog {
         mnuView.add(mniDataHexa);
 
         btgData.add(mniDataDeca);
+        mniDataDeca.setMnemonic('D');
         mniDataDeca.setText("Decimal data");
         mniDataDeca.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -110,6 +109,7 @@ public class HexaEditorDialog extends javax.swing.JDialog {
         mnuView.add(mniDataDeca);
         mnuView.add(jSeparator2);
 
+        mniClose.setMnemonic('C');
         mniClose.setText("Close view");
         mniClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -130,25 +130,25 @@ public class HexaEditorDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_mniCloseActionPerformed
 
     private void onHexCaptions(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_onHexCaptions
-        if (evt.getStateChange() == evt.SELECTED) {
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
             setOfsetBase(16);
         }
     }//GEN-LAST:event_onHexCaptions
 
     private void onDecCaptions(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_onDecCaptions
-        if (evt.getStateChange() == evt.SELECTED) {
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
             setOfsetBase(10);
         }
     }//GEN-LAST:event_onDecCaptions
 
     private void onHexData(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_onHexData
-        if (evt.getStateChange() == evt.SELECTED) {
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
             setDataBase(16);
         }
     }//GEN-LAST:event_onHexData
 
     private void onDecData(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_onDecData
-        if (evt.getStateChange() == evt.SELECTED) {
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
             setDataBase(10);
         }
     }//GEN-LAST:event_onDecData
@@ -246,14 +246,18 @@ public class HexaEditorDialog extends javax.swing.JDialog {
             dataPos++;
 
             if (linePos == numbersPerRow || dataPos == data.length) {
+                
+                int paddingSpaces = (numbersPerRow-linePos)*(dataBase==10?4:3);
+                for (int i=0;i<paddingSpaces;i++) sb.append(' ');
                 sb.append(" | ").append(txtBuilder);
                 sb.append(System.getProperty("line.separator"));
                 linePos = 0;
             }
 
         }
-
         jtaHexView.setText(sb.toString());
+        jtaHexView.setCaretPosition(0);
+        
     }
 
 }

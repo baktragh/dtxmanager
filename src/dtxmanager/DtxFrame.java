@@ -3,9 +3,11 @@ package dtxmanager;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
 import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -48,7 +50,6 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
 
         jsppSplitter = new javax.swing.JSplitPane();
         pOriginal = new javax.swing.JPanel();
-        lblFilename = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jtbOriginal = new javax.swing.JTable();
         pOriginalCtrl = new javax.swing.JPanel();
@@ -73,7 +74,6 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         btnPlusRun = new javax.swing.JButton();
         btnPlusInit = new javax.swing.JButton();
         btnComment = new javax.swing.JButton();
-        lblModifiedFileName = new javax.swing.JLabel();
         btnClr = new javax.swing.JButton();
         btnAddMove = new javax.swing.JButton();
         btnSplit = new javax.swing.JButton();
@@ -83,21 +83,20 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         jSeparator1 = new javax.swing.JSeparator();
         mniQuit = new javax.swing.JMenuItem();
         mnuProject = new javax.swing.JMenu();
+        mniPurify = new javax.swing.JMenuItem();
+        mniTurboVersion = new javax.swing.JMenuItem();
+        jSeparator4 = new javax.swing.JPopupMenu.Separator();
         mniLoadProject = new javax.swing.JMenuItem();
         mniSaveProject = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JSeparator();
         mniExport = new javax.swing.JMenuItem();
-        mnuSpecial = new javax.swing.JMenu();
-        mniPurify = new javax.swing.JMenuItem();
-        jSeparator3 = new javax.swing.JPopupMenu.Separator();
+        mnuSection = new javax.swing.JMenu();
         mniRun2Init = new javax.swing.JMenuItem();
-        mniChangeMove = new javax.swing.JMenuItem();
         mniMerge = new javax.swing.JMenuItem();
         mniLdaSta = new javax.swing.JMenuItem();
         jmiReplaceRunInit = new javax.swing.JMenuItem();
+        mniChangeMove = new javax.swing.JMenuItem();
         jSeparator7 = new javax.swing.JPopupMenu.Separator();
-        mniTurboVersion = new javax.swing.JMenuItem();
-        jSeparator5 = new javax.swing.JPopupMenu.Separator();
         mniHexaEdit = new javax.swing.JMenuItem();
         mniCopyArray = new javax.swing.JMenuItem();
         jSeparator6 = new javax.swing.JPopupMenu.Separator();
@@ -118,11 +117,8 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         jsppSplitter.setContinuousLayout(true);
         jsppSplitter.setOneTouchExpandable(true);
 
-        pOriginal.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), "Section buffer"));
+        pOriginal.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), "Section buffer ( )"));
         pOriginal.setLayout(new java.awt.BorderLayout());
-
-        lblFilename.setText("filename");
-        pOriginal.add(lblFilename, java.awt.BorderLayout.SOUTH);
 
         jScrollPane1.setPreferredSize(new java.awt.Dimension(344, 403));
 
@@ -136,7 +132,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
 
         btnToModified.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnToModified.setText(">");
-        btnToModified.setToolTipText("Add selected sections to project");
+        btnToModified.setToolTipText("Add selected sections to the project");
         btnToModified.setMargin(new java.awt.Insets(2, 4, 2, 4));
         btnToModified.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -170,7 +166,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
 
         btnAddAll.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnAddAll.setText(">>");
-        btnAddAll.setToolTipText("Add all sections to project");
+        btnAddAll.setToolTipText("Add all sections to the project");
         btnAddAll.setMargin(new java.awt.Insets(2, 4, 2, 4));
         btnAddAll.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -187,7 +183,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
 
         btnExportOrig.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnExportOrig.setText("EXP H-");
-        btnExportOrig.setToolTipText("Export selected sections, only data");
+        btnExportOrig.setToolTipText("Export selected sections, only data without headers");
         btnExportOrig.setMargin(new java.awt.Insets(2, 4, 2, 4));
         btnExportOrig.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -222,7 +218,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
 
         btnOriginalComment.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnOriginalComment.setText("CMT");
-        btnOriginalComment.setToolTipText("Add comment to selected section");
+        btnOriginalComment.setToolTipText("Add comment to the selected section");
         btnOriginalComment.setMargin(new java.awt.Insets(2, 4, 2, 4));
         btnOriginalComment.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -241,7 +237,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
 
         jsppSplitter.setLeftComponent(pOriginal);
 
-        pModified.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), "Project"));
+        pModified.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), "Project ( )"));
         pModified.setLayout(new java.awt.BorderLayout());
 
         jScrollPane2.setPreferredSize(new java.awt.Dimension(344, 403));
@@ -424,7 +420,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
 
         btnComment.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnComment.setText("CMT");
-        btnComment.setToolTipText("Add comment to selected section");
+        btnComment.setToolTipText("Add comment to the selected section");
         btnComment.setMargin(new java.awt.Insets(2, 4, 2, 4));
         btnComment.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -437,12 +433,6 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(2, 1, 0, 1);
         pModifiedCtrl.add(btnComment, gridBagConstraints);
-
-        lblModifiedFileName.setText("filename");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridwidth = 7;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 2, 0);
-        pModifiedCtrl.add(lblModifiedFileName, gridBagConstraints);
 
         btnClr.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnClr.setText("CLR");
@@ -462,7 +452,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
 
         btnAddMove.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnAddMove.setText("+MVB");
-        btnAddMove.setToolTipText("<html>\nAdd a subroutine which performs memory block move.<br>\nThe subroutine also disables ROM, so block can be moved to RAM under ROM<br>\nSHIFT - fill the address textfields according to first selected section<br>\nTo activate the subroutine add INIT jump to first address of the subroutine\n</html>\n");
+        btnAddMove.setToolTipText("<html>\nAdd a section with subroutine that moves a memory block.<br>\nThe subroutine also disables ROM, so the block can be moved to RAM under ROM<br>\nSHIFT - preset the address textfields using address of the first selected section<br>\nTo activate the subroutine, add an INIT jump to first address of the subroutine\n</html>\n");
         btnAddMove.setMargin(new java.awt.Insets(2, 4, 2, 4));
         btnAddMove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -479,7 +469,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
 
         btnSplit.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnSplit.setText("SPL");
-        btnSplit.setToolTipText("Split first selected section");
+        btnSplit.setToolTipText("Split the first selected section");
         btnSplit.setMargin(new java.awt.Insets(2, 4, 2, 4));
         btnSplit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -532,7 +522,27 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         mnuProject.setText("Project");
         mnuProject.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
 
-        mniLoadProject.setText("Load project");
+        mniPurify.setMnemonic('P');
+        mniPurify.setText("Purify project");
+        mniPurify.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mniPurifyActionPerformed(evt);
+            }
+        });
+        mnuProject.add(mniPurify);
+
+        mniTurboVersion.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F11, 0));
+        mniTurboVersion.setMnemonic('t');
+        mniTurboVersion.setText("Make monolithic binary...");
+        mniTurboVersion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                onMakeTurboVersion(evt);
+            }
+        });
+        mnuProject.add(mniTurboVersion);
+        mnuProject.add(jSeparator4);
+
+        mniLoadProject.setText("Load project...");
         mniLoadProject.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mniLoadProjectActionPerformed(evt);
@@ -540,7 +550,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         });
         mnuProject.add(mniLoadProject);
 
-        mniSaveProject.setText("Save project");
+        mniSaveProject.setText("Save project...");
         mniSaveProject.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mniSaveProjectActionPerformed(evt);
@@ -551,7 +561,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
 
         mniExport.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         mniExport.setMnemonic('E');
-        mniExport.setText("Export project to XEX");
+        mniExport.setText("Export project to XEX...");
         mniExport.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mniExportActionPerformed(evt);
@@ -561,18 +571,8 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
 
         jMenuBar1.add(mnuProject);
 
-        mnuSpecial.setMnemonic('S');
-        mnuSpecial.setText("Special");
-
-        mniPurify.setMnemonic('P');
-        mniPurify.setText("Purify project");
-        mniPurify.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mniPurifyActionPerformed(evt);
-            }
-        });
-        mnuSpecial.add(mniPurify);
-        mnuSpecial.add(jSeparator3);
+        mnuSection.setMnemonic('S');
+        mnuSection.setText("Section");
 
         mniRun2Init.setText("RUN2INIT or INIT2RUN");
         mniRun2Init.addActionListener(new java.awt.event.ActionListener() {
@@ -580,16 +580,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
                 on_run2init(evt);
             }
         });
-        mnuSpecial.add(mniRun2Init);
-
-        mniChangeMove.setMnemonic('m');
-        mniChangeMove.setText("Change moveblock");
-        mniChangeMove.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mniChangeMoveActionPerformed(evt);
-            }
-        });
-        mnuSpecial.add(mniChangeMove);
+        mnuSection.add(mniRun2Init);
 
         mniMerge.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F12, 0));
         mniMerge.setMnemonic('g');
@@ -599,7 +590,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
                 onMergeSelected(evt);
             }
         });
-        mnuSpecial.add(mniMerge);
+        mnuSection.add(mniMerge);
 
         mniLdaSta.setText("Replace section with LDA/STA code");
         mniLdaSta.addActionListener(new java.awt.event.ActionListener() {
@@ -607,37 +598,35 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
                 mniLdaStaActionPerformed(evt);
             }
         });
-        mnuSpecial.add(mniLdaSta);
+        mnuSection.add(mniLdaSta);
 
-        jmiReplaceRunInit.setText("Replace RUN/INIT with code");
+        jmiReplaceRunInit.setText("Replace RUN/INIT with code...");
         jmiReplaceRunInit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmiReplaceRunInitActionPerformed(evt);
             }
         });
-        mnuSpecial.add(jmiReplaceRunInit);
-        mnuSpecial.add(jSeparator7);
+        mnuSection.add(jmiReplaceRunInit);
 
-        mniTurboVersion.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F11, 0));
-        mniTurboVersion.setMnemonic('t');
-        mniTurboVersion.setText("Make monolithic binary");
-        mniTurboVersion.addActionListener(new java.awt.event.ActionListener() {
+        mniChangeMove.setMnemonic('m');
+        mniChangeMove.setText("Change moveblock...");
+        mniChangeMove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                onMakeTurboVersion(evt);
+                mniChangeMoveActionPerformed(evt);
             }
         });
-        mnuSpecial.add(mniTurboVersion);
-        mnuSpecial.add(jSeparator5);
+        mnuSection.add(mniChangeMove);
+        mnuSection.add(jSeparator7);
 
         mniHexaEdit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, 0));
         mniHexaEdit.setMnemonic('H');
-        mniHexaEdit.setText("Hexadecimal view");
+        mniHexaEdit.setText("Hexadecimal view...");
         mniHexaEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 onHexaEdit(evt);
             }
         });
-        mnuSpecial.add(mniHexaEdit);
+        mnuSection.add(mniHexaEdit);
 
         mniCopyArray.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.SHIFT_MASK));
         mniCopyArray.setText("Copy section as C array");
@@ -646,8 +635,8 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
                 onCopyAsCArray(evt);
             }
         });
-        mnuSpecial.add(mniCopyArray);
-        mnuSpecial.add(jSeparator6);
+        mnuSection.add(mniCopyArray);
+        mnuSection.add(jSeparator6);
 
         jmiSplitEvenly.setText("Split section evenly...");
         jmiSplitEvenly.addActionListener(new java.awt.event.ActionListener() {
@@ -655,15 +644,15 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
                 jmiSplitEvenlyActionPerformed(evt);
             }
         });
-        mnuSpecial.add(jmiSplitEvenly);
+        mnuSection.add(jmiSplitEvenly);
 
-        jMenuBar1.add(mnuSpecial);
+        jMenuBar1.add(mnuSection);
 
         mnuHelp.setMnemonic('H');
         mnuHelp.setText("Help");
 
         mniAbout.setMnemonic('A');
-        mniAbout.setText("About");
+        mniAbout.setText("About...");
         mniAbout.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mniAboutActionPerformed(evt);
@@ -827,7 +816,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         int badr1 = 0;
         int badr2 = 0;
 
-        if ((evt.getModifiers() & evt.SHIFT_MASK) != 0 && jtbModified.getSelectedRow() != -1) {
+        if ((evt.getModifiers() & ActionEvent.SHIFT_MASK) != 0 && jtbModified.getSelectedRow() != -1) {
             Section js = DtxManager.ae2.getSection(jtbModified.getSelectedRow());
             badr1 = js.start;
             badr2 = js.stop;
@@ -942,7 +931,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
 
         int badr = 0;
         int tag = -1;
-        if ((evt.getModifiers() & evt.SHIFT_MASK) != 0 && jtbModified.getSelectedRow() != -1) {
+        if ((evt.getModifiers() & ActionEvent.SHIFT_MASK) != 0 && jtbModified.getSelectedRow() != -1) {
             Section js = DtxManager.ae2.getSection(jtbModified.getSelectedRow());
             badr = js.start;
             tag = jtbModified.getSelectedRow();
@@ -975,7 +964,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         int badr = 0;
         int tag = -1;
 
-        if ((evt.getModifiers() & evt.SHIFT_MASK) != 0 && jtbModified.getSelectedRow() != -1) {
+        if ((evt.getModifiers() & ActionEvent.SHIFT_MASK) != 0 && jtbModified.getSelectedRow() != -1) {
             Section js = DtxManager.ae2.getSection(jtbModified.getSelectedRow());
             badr = js.start;
             tag = jtbModified.getSelectedRow();
@@ -1009,7 +998,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         }
 
         int step = 1;
-        if ((evt.getModifiers() & evt.SHIFT_MASK) != 0) {
+        if ((evt.getModifiers() & ActionEvent.SHIFT_MASK) != 0) {
             step = 10;
         }
 
@@ -1027,7 +1016,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         }
 
         int step = 1;
-        if ((evt.getModifiers() & evt.SHIFT_MASK) != 0) {
+        if ((evt.getModifiers() & ActionEvent.SHIFT_MASK) != 0) {
             step = 10;
         }
 
@@ -1179,7 +1168,8 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         /*Save it*/
         try {
             DtxManager.ae2.saveFile(f.getAbsolutePath(), si, true);
-            this.lblModifiedFileName.setText(f.getName());
+            TitledBorder tb = (TitledBorder)pModified.getBorder();
+            tb.setTitle("Project ("+f.getName()+")");
 
         }
         catch (Exception e) {
@@ -1231,12 +1221,14 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
             DtxManager.ae1.analyze(true);
             this.jtbOriginal.setModel(DtxManager.ae1);
             updateColumnParams();
-            lblFilename.setText(f.getName());
+            TitledBorder tb = (TitledBorder)pOriginal.getBorder();
+            tb.setTitle("Section buffer ("+f.getName()+")");
         }
         catch (Exception e) {
             e.printStackTrace();
             DtxManager.ae1.clear();
-            lblFilename.setText("filename");
+            TitledBorder tb = (TitledBorder)pOriginal.getBorder();
+            tb.setTitle("Section buffer ( )");
             warning(e);
 
         }
@@ -1482,8 +1474,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JPopupMenu.Separator jSeparator3;
-    private javax.swing.JPopupMenu.Separator jSeparator5;
+    private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
     private javax.swing.JMenuItem jmiReplaceRunInit;
@@ -1491,8 +1482,6 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
     private javax.swing.JSplitPane jsppSplitter;
     private javax.swing.JTable jtbModified;
     private javax.swing.JTable jtbOriginal;
-    private javax.swing.JLabel lblFilename;
-    private javax.swing.JLabel lblModifiedFileName;
     private javax.swing.JMenuItem mniAbout;
     private javax.swing.JMenuItem mniChangeMove;
     private javax.swing.JMenuItem mniCopyArray;
@@ -1510,7 +1499,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
     private javax.swing.JMenu mnuFile;
     private javax.swing.JMenu mnuHelp;
     private javax.swing.JMenu mnuProject;
-    private javax.swing.JMenu mnuSpecial;
+    private javax.swing.JMenu mnuSection;
     private javax.swing.JPanel pModified;
     private javax.swing.JPanel pModifiedCtrl;
     private javax.swing.JPanel pOriginal;

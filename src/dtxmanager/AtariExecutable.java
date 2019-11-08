@@ -8,7 +8,7 @@ import javax.swing.table.*;
 class AtariExecutableException extends Exception {
 
     /**
-     * Zprava
+     * Message
      */
     private String msg = "";
 
@@ -16,11 +16,7 @@ class AtariExecutableException extends Exception {
         this.msg = msg;
     }
 
-    /**
-     * Pozadavek na vraceni zpravy
-     *
-     * @return Zprava
-     */
+    
     public String getMessage() {
         return msg;
     }
@@ -31,43 +27,34 @@ class AtariExecutableException extends Exception {
 }
 
 /**
- * Vicesekcni format Atari executable.<BR>
- * Stary format z pocatku osmdesatych let pouzivany systemem ATARI DOS. Tato
- * trida umi soubory tohoto formatu nacitat, analyzovat a konvertovat vicesekcni
- * soubory na jednosekcni, pokud se sekce neprekryvaji.<BR>
- *
- * Po prevodu na jednu sekci je doplnen kod pro provedeni odskoku
+ * Atari DOS II 2.0 binary load file
  */
 public class AtariExecutable extends AbstractTableModel {
 
     /**
-     * Jmeno souboru na disku
+     * File on the disk
      */
     private String filename;
-    /**
-     * Delka pridavneho kodu
-     */
-    private int extraLen;
+    
 
     /**
-     * Seznam vsech sekci
+     * List of all sections
      */
-    private ArrayList allSections;
+    private ArrayList<Section> allSections;
 
     /**
-     * Nova instance
+     * New instance
      */
     public AtariExecutable(String _filename) {
         filename = _filename;
-        allSections = new ArrayList();
+        allSections = new ArrayList<>();
         this.fireTableDataChanged();
-        extraLen = 0;
     }
 
     /**
-     * Delka pridavneho kodu
+     * Calculate length of extra code to replace INIT and RUN sections
      *
-     * @return Delka specialniho kodu v bajtech
+     * @return Length of code
      */
     int getExtraCodeLength() {
         int l = allSections.size();
@@ -88,9 +75,9 @@ public class AtariExecutable extends AbstractTableModel {
     }
 
     /**
-     * Vrati seznam sekci jako pole retezcu
+     * List sections as strings
      *
-     * @return Pole retezcu
+     * @return Array of strings describing sections
      */
     public String[] listing() {
         /*Pole retezcu*/
@@ -102,95 +89,104 @@ public class AtariExecutable extends AbstractTableModel {
     }
 
     /**
-     * Analyza souboru. Zjistuje se rozlozeni a typ sekci.
+     * Analyze the binary load file
      *
      * @throws IOException,AtariExecutableException
      */
     public void analyze(boolean full) throws IOException, AtariExecutableException {
 
-        Vector v = new Vector();
 
         RandomAccessFile raf;
         raf = new RandomAccessFile(filename, "r");
+        
+        /*Check for 16 MB*/
+        if (raf.length()>16*1024*1024) {
+            throw new AtariExecutableException("Binary load file exceeds 16 MB");
+        }
+        
+        if (raf.length()<3) {
+            throw new AtariExecutableException("Binary load file is too small to be a binary load file");
+        }
 
-        /*Nacteni vsech dat ze souboru*/
+        /*Get all the data from the file as array of integers*/
         byte[] filebData = new byte[(int) raf.length()];
         raf.readFully(filebData);
         raf.close();
 
-        /*Konverze z pole bajtu na pole intu. Skoda ze Java nema neznamenkove
-         *typy,ale neda se nic delat*/
         int[] fileData = new int[filebData.length];
         byte b;
         for (int i = 0; i < fileData.length; i++) {
-            /*Orezani znamenka*/
             b = filebData[i];
             fileData[i] = (b < 0) ? b + 256 : b;
         }
 
         int pos = 0;
         int size = filebData.length;
-        int b1, b2, b3, b4, b5;
-        int w1, w2, w3, w4, w5, w6;
+        int b1, b2;
+        int w1, w2, w3, w4;
 
-        /*Zahajeni analyzy*/
- /*Prvni dva bajty musi byt 255*/
+        /*Begin analysis
+        /*First two bytes must be 255 255*/
         if (full == true) {
-
             if (fileData[0] != 255 || fileData[1] != 255) {
                 throw new AtariExecutableException("No 255 255 header");
-
             }
-
             pos = 2;
         }
         else {
             pos = 0;
         }
 
-        /*Sekce musi mit alespon 3 byty*/
+        /*A section is at least 3 bytes*/
         while (size - pos > 3) {
 
-            /*Je zde 255 255 ?*/
+            /*Another header?*/
             b1 = fileData[pos];
             b2 = fileData[pos + 1];
 
-            /*Jestlize ano, tak se inkrementuje pozice, jinak nic*/
+            /*If so, then we skip it*/
             if (b1 == 255 && b2 == 255) {
                 pos += 2;
             }
 
-            /*pos ukazuje na prvni bajt sekce - zde je jeji velikost*/
+            /*Get atart and end addresses*/
             b1 = fileData[pos];
             pos++;
             b2 = fileData[pos];
             pos++;
-            w1 = b2 * 256 + b1;   //w1 obsahuje  pocatecni adresu sekce
+            w1 = b2 * 256 + b1;   
             b1 = fileData[pos];
             pos++;
             b2 = fileData[pos];
             pos++;
-            w2 = b2 * 256 + b1;   //w2 obsahuje koncovou adresu sekce
+            w2 = b2 * 256 + b1;   
+            
+            /*Check for negative segment size*/
+            if (w1>w2) {
+                throw new AtariExecutableException("Negative segment size");
+            }
+            
+            /*Get length*/
+            w3 = w2 - w1 + 1;     
 
-            w3 = w2 - w1 + 1;     //w3 obsahuje velikost sekce
-
-            /*Je to init ?*/
+            try {
+            
+            /*Is that pure INIT?*/
             if (w3 == 2 && w1 == 738 && w2 == 739) {
-                /*Nacti dva bajty, ukazuji kam se ma skocit na init*/
+                /*Get the INIT vector*/
                 b1 = fileData[pos];
                 pos++;
                 b2 = fileData[pos];
                 pos++;
-                v.add(new Integer(pos - 1));
                 w4 = b2 * 256 + b1;
                 Section ns = new Section(w1, w2, Section.INIT_SECTION, w4);
                 this.allSections.add(ns);
                 continue;
             }
 
-            /*Je to run ?*/
+            /*Is that pure run?*/
             if (w3 == 2 && w1 == 736 && w2 == 737) {
-                /*Nacti dva bajty, ukazuji kam se ma skocit na init*/
+                /*Get the RUN vector*/
                 b1 = fileData[pos];
                 pos++;
                 b2 = fileData[pos];
@@ -201,9 +197,9 @@ public class AtariExecutable extends AbstractTableModel {
                 continue;
             }
 
-            /*Je to oboji sekce- jak init, tak run*/
+            /*Is it RUN+INIT*/
             if (w3 == 4 && w1 == 736 && w2 == 739) {
-                /*Nacti dva bajty, ukazuji kam se ma skocit na init*/
+                /*Get vectors*/
                 b1 = fileData[pos];
                 pos++;
                 b2 = fileData[pos];
@@ -214,7 +210,6 @@ public class AtariExecutable extends AbstractTableModel {
                 pos++;
                 b2 = fileData[pos];
                 pos++;
-                v.add(new Integer(pos - 1));
                 w4 = b2 * 256 + b1;
                 Section ens = new Section(w1, w2, Section.RUNINIT_SECTION, bkp, w4);
                 this.allSections.add(ens);
@@ -222,7 +217,7 @@ public class AtariExecutable extends AbstractTableModel {
 
             }
 
-            /*Je to obycejna sekce, udela se zaznam do pole a pokracuje se*/
+            /*Just common section*/
             Section s;
             s = new Section(w1, w2, Section.COMMON_SECTION);
             this.allSections.add(s);
@@ -230,14 +225,22 @@ public class AtariExecutable extends AbstractTableModel {
                 s.data[i] = fileData[pos + i];
             }
             pos += w3;
+            }
+            catch (ArrayIndexOutOfBoundsException aiobe) {
+                
+                String detail = aiobe.getClass().getName();
+                if (aiobe.getMessage()!=null) detail+=": "+aiobe.getMessage();
+                
+                throw new AtariExecutableException("Binary load file has corrupted structure "+detail);
+            }
 
-        }/*Konec while*/
+        }/*End of while*/
 
         this.fireTableDataChanged();
     }
 
     /**
-     * Vylistuje sekce souboru na standardni vystup
+     * List binary load file to the standard output
      */
     void listToConsole() {
         for (int i = 0; i < allSections.size(); i++) {
@@ -246,13 +249,17 @@ public class AtariExecutable extends AbstractTableModel {
     }
 
     /**
-     * Exportuje sekci do externiho souboru s hlavickou nebo bez
+     * Export section to file with or without header
+     * @param index Index of section
+     * @param fname Output file name
+     * @param header Indicates whether to export header or not
+     * @throws Exception 
      */
     void exportSection(int index, String fname, boolean header) throws Exception {
 
         Section sect = (Section) allSections.get(index);
 
-        /*Soubor jen pro cteni*/
+        /*Write to file*/
         RandomAccessFile raf = new RandomAccessFile(fname, "rw");
 
         if (header == true) {
@@ -272,7 +279,7 @@ public class AtariExecutable extends AbstractTableModel {
     }
 
     /**
-     * posun dane sekce blize k pocatku
+     * Move one section up
      */
     int moveUp(int index, int step) {
 
@@ -293,7 +300,7 @@ public class AtariExecutable extends AbstractTableModel {
     }
 
     /**
-     * posun dane sekce blize ke konci
+     * Move one section down
      */
     int moveDown(int index, int step) {
         if (index < allSections.size() - 1) {
@@ -311,7 +318,7 @@ public class AtariExecutable extends AbstractTableModel {
         }
     }
 
-    /*Smazani sekce*/
+    /*Remove section*/
     void deleteSection(int index) {
         if (index >= 0 & index < allSections.size()) {
             allSections.remove(index);
@@ -319,7 +326,7 @@ public class AtariExecutable extends AbstractTableModel {
         this.fireTableDataChanged();
     }
 
-    /*Pridani nove sekce*/
+    /*Add new section*/
     void addSection(Section s) {
         this.allSections.add(s);
         this.fireTableDataChanged();
@@ -336,18 +343,18 @@ public class AtariExecutable extends AbstractTableModel {
         this.fireTableDataChanged();
     }
 
-    /*Ulozeni do souboru*/
+    /*Save to file*/
     void saveFile(String fname, int[] scindices, boolean hdr) throws Exception {
 
-        /*Otevrit soubor*/
+        /*Open file*/
         RandomAccessFile raf = new RandomAccessFile(fname, "rw");
         raf.setLength(0);
-        /*Zapsat 255 255*/
+        /*Write header*/
         if (hdr == true) {
             raf.writeByte(255);
             raf.writeByte(255);
         }
-        /*Vzit vsechny sekce a pozapisovat*/
+        /*Get all sections and write them*/
         for (int i = 0; i < scindices.length; i++) {
             Section s = (Section) allSections.get(scindices[i]);
             switch (s.type) {
@@ -426,37 +433,37 @@ public class AtariExecutable extends AbstractTableModel {
         Section rs = new Section(40000, 40000, Section.COMMON_SECTION, 0, 0);
         Section ss = getSection(idx);
 
-        Vector dta = new Vector();
-        dta.add(new Integer(72));
-        /*A do zasobniku*/
+        ArrayList<Integer> dta = new ArrayList<>();
+        dta.add(72);
+        /*Pusth A*/
 
- /*Hledame hodnoty 0-255*/
+        /*Looking for values*/
         for (int v = 0; v < 256; v++) {
             boolean first = true;
             for (int a = ss.start; a <= ss.stop; a++) {
                 if (ss.data[a - ss.start] == v) {
                     if (first == true) {
-                        dta.add(new Integer(169));
+                        dta.add(169);
                         /*LDA #*/
-                        dta.add(new Integer(v));
+                        dta.add(v);
                         first = false;
                     }
-                    dta.add(new Integer(141));
+                    dta.add(141);
                     /*STA*/
-                    dta.add(new Integer(a % 256));
-                    dta.add(new Integer(a / 256));
+                    dta.add(a % 256);
+                    dta.add(a / 256);
                 }
             }
         }
 
-        dta.add(new Integer(104));
+        dta.add(104);
         /*PLA*/
-        dta.add(new Integer(96));
+        dta.add(96);
         /*RTS*/
 
         int[] data = new int[dta.size()];
         for (int k = 0; k < dta.size(); k++) {
-            data[k] = ((Integer) (dta.elementAt(k))).intValue();
+            data[k] = dta.get(idx);
         }
 
         rs.comment = "Gns:";
@@ -485,7 +492,7 @@ public class AtariExecutable extends AbstractTableModel {
     }
 
     /**
-     * Importuje data opatrena hlavickami
+     * Import data with headers
      */
     void importHeaderedData(String fname) throws Exception {
         AtariExecutable ax = new AtariExecutable(fname);
@@ -500,27 +507,27 @@ public class AtariExecutable extends AbstractTableModel {
     }
 
     /**
-     * Prida sekci pro presun bloku pameti
+     * Add section to move block
      */
     Section createMoveBlockSection(int stadr, int source, int target, int length) {
         Section s = new Section(stadr, stadr + moveblock.length - 1 - 6, Section.MOVEBLOCK_SECTION);
         s.setMoveParameters(source, source + length - 1, target);
-        /*Nastavit adresy*/
+        /*Set addr*/
         moveblock[IDX_SRC_LO] = source % 256;
         moveblock[IDX_SRC_HI] = source / 256;
         moveblock[IDX_TGT_LO] = target % 256;
         moveblock[IDX_TGT_HI] = target / 256;
-        /*Delka se musi o jednu snizit*/
+        /*Adjust length*/
         length--;
         moveblock[IDX_LEN_LO] = length % 256;
         moveblock[IDX_LEN_HI] = length / 256;
         s.data = new int[moveblock.length - 6];
-        /*Kopirovat obsah sekce*/
+        /*Copy section*/
         for (int i = 6; i < moveblock.length; i++) {
             s.data[i - 6] = moveblock[i];
         }
         /*Komentar*/
-        StringBuffer sb = new StringBuffer("MV:");
+        StringBuilder sb = new StringBuilder("MV:");
         sb.append(source);
         sb.append("-");
         sb.append(source + length);
@@ -535,20 +542,21 @@ public class AtariExecutable extends AbstractTableModel {
     }
 
     /**
-     * Rozdeleni sekce
+     * Split a section
      */
-    void splitSection(int idx, int fosp) throws AtariExecutableException {
+    void splitSection(int idx, int fosp) throws AtariExecutableException,CloneNotSupportedException {
         Section s = getSection(idx);
-        /*Kontrola rozsahu*/
+        
+        /*Check range*/
 
         if (s.type == Section.COMMON_SECTION) {
             if (fosp <= s.start || fosp > s.stop) {
                 throw new AtariExecutableException("First address of second part out of range");
 
             }
-            /*Rozsah je v poradku, uprava puvodni sekce*/
+            /*Modify original section*/
             Section sps = new Section(fosp, s.stop, Section.COMMON_SECTION);
-            /*Kopirovani dat do druhe sekce*/
+            /*Copy data*/
             sps.data = new int[s.stop - fosp + 1];
             for (int i = fosp - s.start; i < s.stop - s.start + 1; i++) {
                 sps.data[i - fosp + s.start] = s.data[i];
@@ -582,17 +590,17 @@ public class AtariExecutable extends AbstractTableModel {
     public Object getValueAt(int y, int x) {
         Section s = getSection(y);
 
-        /*Obrazek*/
+        /*Icon*/
         if (x == 0) {
             return AtariExecutable.iconTypes[s.type];
         }
 
-        /*TYP SEKCE*/
+        /*Section type*/
         if (x == 1) {
-            return Section.typeStrings[s.type];
+            return Section.SECTION_TYPE_STRINGS[s.type];
         }
 
-        /*Prvni adresa*/
+        /*First address*/
         if (x == 2) {
             if (s.type == Section.COMMON_SECTION || s.type == Section.MOVEBLOCK_SECTION) {
                 return Integer.toString(s.start);
@@ -602,7 +610,7 @@ public class AtariExecutable extends AbstractTableModel {
             }
 
         }
-        /*Druha adresa*/
+        /*Last address*/
         if (x == 3) {
             if (s.type == Section.COMMON_SECTION || s.type == Section.MOVEBLOCK_SECTION) {
                 return Integer.toString(s.stop);
@@ -612,7 +620,7 @@ public class AtariExecutable extends AbstractTableModel {
             }
             return "";
         }
-        /*Komentar*/
+        /*Comment*/
         if (x == 4) {
             return s.comment;
         }
@@ -648,7 +656,6 @@ public class AtariExecutable extends AbstractTableModel {
         this.allSections.clear();
         fireTableDataChanged();
         filename = "";
-        extraLen = 0;
     }
 
     void setFileName(String fn) {
@@ -716,7 +723,7 @@ public class AtariExecutable extends AbstractTableModel {
         }
 
         /*Presunout vsechny RUN sekce na konec*/
-        ArrayList al = new ArrayList();
+        ArrayList<Section> al = new ArrayList<>();
         for (int i = 0; i < allSections.size(); i++) {
             s = (Section) this.allSections.get(i);
             if (s.type == Section.RUN_SECTION) {
@@ -734,17 +741,17 @@ public class AtariExecutable extends AbstractTableModel {
         this.fireTableDataChanged();
     }
 
-    public ArrayList getAllSections() {
+    public ArrayList<Section> getAllSections() {
         return allSections;
     }
 
-    public void setAllSections(ArrayList al) {
+    public void setAllSections(ArrayList<Section> al) {
         allSections = al;
         this.fireTableDataChanged();
     }
 
     /**
-     * Vytvori turbo verzi ze souboru
+     * Create monolithic binary
      */
     public void makeMonolithicBinary(int extraAddress, boolean extraCode, String outFile) throws AtariExecutableException {
 
@@ -753,18 +760,17 @@ public class AtariExecutable extends AbstractTableModel {
         int firstAdr = Integer.MAX_VALUE;
         int lastAdr = Integer.MIN_VALUE;
 
-        /*Kontrola na runinit*/
         int l = allSections.size();
         Section s;
         long totalSize = 0;
 
         for (int i = 0; i < l; i++) {
             s = (Section) allSections.get(i);
-            /*Kontrola na RUNINIT*/
+            /*Check RUNINIT*/
             if (s.type == Section.RUNINIT_SECTION) {
                 throw new AtariExecutableException("File contains RUNINIT section");
             }
-            /*Kontrola, RUN musi byt posledni*/
+            /*Check RUN last */
             if (s.type == Section.RUN_SECTION) {
                 if (i != l - 1) {
                     throw new AtariExecutableException("RUN section is not last");
@@ -772,7 +778,7 @@ public class AtariExecutable extends AbstractTableModel {
                 originalRunAdr = s.jump;
             }
 
-            /*Rozsah min,max adresa*/
+            /*Range*/
             if (s.type == Section.COMMON_SECTION || s.type == Section.MOVEBLOCK_SECTION) {
                 if (s.start < firstAdr) {
                     firstAdr = s.start;
@@ -785,7 +791,7 @@ public class AtariExecutable extends AbstractTableModel {
 
         }
 
-        /*Kontrola velikosti*/
+        /*Size check*/
         if (totalSize > 65535) {
             throw new AtariExecutableException("File size exceeds 65535 bytes");
         }
@@ -794,7 +800,7 @@ public class AtariExecutable extends AbstractTableModel {
             throw new AtariExecutableException("File has no DATA sections");
         }
 
-        /*Kontrola, jestli pridavny kod neovlivni min a max adresu*/
+        /*Extra code influence*/
         if (extraCode == true) {
 
             if (extraAddress < 0 || extraAddress > 65535) {
@@ -809,15 +815,15 @@ public class AtariExecutable extends AbstractTableModel {
             }
         }
 
-        /*Vlastni slucovani*/
+        /*Merging*/
         int[] pool = new int[65536];
 
-        /*Vynulovat*/
+        /*Zero all*/
         for (int i = 0; i < pool.length; i++) {
             pool[i] = 0;
         }
 
-        /*Slouceni datovych sekci*/
+        /*Merging common sections*/
         for (int i = 0; i < l; i++) {
             s = (Section) allSections.get(i);
 
@@ -833,7 +839,7 @@ public class AtariExecutable extends AbstractTableModel {
 
         Section rs = null;
 
-        /*Pridavny kod*/
+        /*Extra code replacing runs and inits*/
         if (extraCode == true) {
 
             int ofs = extraAddress;
@@ -860,7 +866,7 @@ public class AtariExecutable extends AbstractTableModel {
                 }
             }
 
-            /*Konci li pridavny kod za nejvyssi adresou, upravit*/
+            /*Adjust last address if needed*/
             if (ofs > lastAdr) {
                 lastAdr = ofs;
             }
@@ -871,7 +877,7 @@ public class AtariExecutable extends AbstractTableModel {
             rs = new Section(736, 737, Section.RUN_SECTION, originalRunAdr);
         }
 
-        /*Zakonceni*/
+        /*Finalization*/
         AtariExecutable retVal = new AtariExecutable(outFile);
 
         int[] resultData = new int[lastAdr - firstAdr + 1];
@@ -895,13 +901,19 @@ public class AtariExecutable extends AbstractTableModel {
             retVal.saveFile(outFile, idxs, true);
         }
         catch (Exception e) {
-            throw new AtariExecutableException("Unable to save file");
+            
+            String msg = e.getClass().getName();
+            
+            if (e.getMessage()!=null) {
+                msg+=":"+e.getMessage();
+            }
+            throw new AtariExecutableException("Unable to save file "+msg);
         }
 
     }
 
     /**
-     * Slouci nekolik sekci do jedne
+     * Merge several sections
      */
     public void mergeSections(int[] indices) throws AtariExecutableException {
 
@@ -950,7 +962,7 @@ public class AtariExecutable extends AbstractTableModel {
                 count++;
             }
             else {
-                throw new AtariExecutableException("RUN,INIT,RUNINIT sections can not be merged");
+                throw new AtariExecutableException("RUN, INIT, RUNINIT sections can not be merged");
             }
         }
 
@@ -984,7 +996,7 @@ public class AtariExecutable extends AbstractTableModel {
     }
 
     /**
-     * Vymaze sekce na danych indexech
+     * Remove section at given indexes
      */
     public void deleteSections(int[] indices) {
         /*Delete it*/

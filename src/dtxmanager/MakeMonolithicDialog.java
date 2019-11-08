@@ -197,7 +197,7 @@ public class MakeMonolithicDialog extends javax.swing.JDialog {
             return;
         }
 
-        JOptionPane.showMessageDialog(this, "Done OK. Test turbo version with emulator !");
+        JOptionPane.showMessageDialog(this, "Done OK. Test the monolithic binary.");
 
     }//GEN-LAST:event_OnMakeTurboVersion
 
@@ -240,7 +240,7 @@ public class MakeMonolithicDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     void warning(Exception e) {
-        StringBuffer sb = new StringBuffer("<HTML>");
+        StringBuilder sb = new StringBuilder("<HTML>");
         sb.append(e.getClass().getName());
         e.printStackTrace();
         if (e.getMessage() != null) {
@@ -254,6 +254,7 @@ public class MakeMonolithicDialog extends javax.swing.JDialog {
         JOptionPane.showMessageDialog(this, sb.toString(), "Error", JOptionPane.ERROR_MESSAGE);
     }
 
+    @Override
     public void setVisible(boolean b) {
         int l = DtxManager.ae2.getExtraCodeLength();
         this.jlbLength.setText(Integer.toString(l));

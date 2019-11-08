@@ -69,10 +69,7 @@ public class DtxManager {
             try {
                 ae1.analyze(true);
             }
-            catch (AtariExecutableException ex) {
-                ex.printStackTrace();
-            }
-            catch (IOException ex) {
+            catch (AtariExecutableException | IOException ex) {
                 ex.printStackTrace();
             }
         }
@@ -81,16 +78,19 @@ public class DtxManager {
 
     }
 
-    /*Operace provadene*/
- /*Presun sekce z jednoho souboru do druheho*/
     public static void moveSectionToMofidied(Section s) {
         /*Clone section*/
-        Section sn = (Section) s.clone();
-        ae2.addSection(sn);
+        
+        try {
+            Section sn = (Section) s.clone();
+            ae2.addSection(sn);
+        }
+        catch (CloneNotSupportedException cnse) {
+            cnse.printStackTrace();
+        }
 
     }
 
-    /*Odstraneni sekce ze souboru*/
     public static void removeSection(int index) {
         ae2.deleteSection(index);
     }
@@ -103,9 +103,7 @@ public class DtxManager {
         c.setLocation(_x, _y);
     }
 
-    /**
-     * Ulozi projekt jako serializovany seznam sekci
-     */
+    
     public static void saveProject(String filename) throws Exception {
         FileOutputStream fos = new FileOutputStream(filename);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -115,13 +113,11 @@ public class DtxManager {
 
     }
 
-    /**
-     * Nacte projekt jako serializovany seznam sekci
-     */
+    
     public static void loadProject(String filename) throws Exception {
         FileInputStream fis = new FileInputStream(filename);
         ObjectInputStream ois = new ObjectInputStream(fis);
-        ArrayList al = (ArrayList) ois.readObject();
+        ArrayList<Section> al = ((ArrayList<Section>)((ArrayList)ois.readObject()));
         ae2.clear();
         ae2.setAllSections(al);
         ois.close();
@@ -132,7 +128,7 @@ public class DtxManager {
         int[] leftCols = new int[4];
         int[] rightCols = new int[4];
 
-        int dividerLocation = 0;
+        int dividerLocation;
         int[] frameBounds = new int[4];
 
         String[] fcs = new String[4];
@@ -154,17 +150,17 @@ public class DtxManager {
             raf.close();
         }
         catch (Exception e) {
-            /*Umyslne prazdne*/
+            /*Intentionally empty*/
             try {
                 raf.close();
             }
             catch (Exception e1) {
-                /*Nejde nic udelat*/
+                /*We cannot do anything*/
             }
             return;
         }
 
-        /*Je jiste, ze se vse nacetlo OK*/
+        /*Apply the layout data*/
         frmDtx.setElementsLayout(leftCols, rightCols, frameBounds, dividerLocation);
         setChooserFile(fcXex, fcs[0]);
         setChooserFile(fcModXex, fcs[1]);
@@ -203,14 +199,13 @@ public class DtxManager {
             raf.close();
         }
         catch (Exception e) {
-            /*Umyslne prazdne*/
+            /*Intentianally empty*/
             try {
                 raf.close();
             }
             catch (Exception e1) {
-                /*Nejde nic udelat*/
+                /*Nothing one can do*/
             }
-            return;
         }
     }
 
