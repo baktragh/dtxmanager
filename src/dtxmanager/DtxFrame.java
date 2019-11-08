@@ -113,14 +113,14 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         });
         getContentPane().setLayout(new java.awt.GridLayout(1, 0));
 
-        jsppSplitter.setResizeWeight(1.0);
+        jsppSplitter.setDividerSize(8);
+        jsppSplitter.setResizeWeight(0.5);
         jsppSplitter.setContinuousLayout(true);
         jsppSplitter.setOneTouchExpandable(true);
 
         pOriginal.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), "Section buffer ( )"));
+        pOriginal.setMinimumSize(new java.awt.Dimension(8, 8));
         pOriginal.setLayout(new java.awt.BorderLayout());
-
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(344, 403));
 
         jtbOriginal.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
         jtbOriginal.setModel(DtxManager.ae1);
@@ -238,9 +238,8 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         jsppSplitter.setLeftComponent(pOriginal);
 
         pModified.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), "Project ( )"));
+        pModified.setMinimumSize(new java.awt.Dimension(8, 8));
         pModified.setLayout(new java.awt.BorderLayout());
-
-        jScrollPane2.setPreferredSize(new java.awt.Dimension(344, 403));
 
         jtbModified.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
         jtbModified.setModel(DtxManager.ae2);
