@@ -1,8 +1,3 @@
-/*
- * AdrDialog.java
- *
- * Created on 16. Ä?erven 2007, 14:48
- */
 package dtxmanager;
 
 import javax.swing.*;

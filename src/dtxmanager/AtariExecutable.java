@@ -820,11 +820,15 @@ static int[] moveblock = {
 
         /*Merging*/
         int[] pool = new int[65536];
+        byte[] modbits = new byte[65536];
 
         /*Zero all*/
         for (int i = 0; i < pool.length; i++) {
             pool[i] = 0;
+            modbits[i]=-1;
         }
+        
+        /*Modbits*/
 
         /*Merging common sections*/
         for (int i = 0; i < l; i++) {
@@ -835,6 +839,7 @@ static int[] moveblock = {
                 int sgm = 0;
                 for (int k = s.start; k <= s.stop; k++) {
                     pool[k] = s.data[sgm];
+                    modbits[k]++;
                     sgm++;
                 }
             }
@@ -851,20 +856,26 @@ static int[] moveblock = {
                 s = (Section) allSections.get(i);
                 if (s.type == Section.INIT_SECTION) {
                     pool[ofs] = 32;
+                    modbits[ofs]++;
                     ofs++; //JSR
                     pool[ofs] = s.jump % 256;
+                    modbits[ofs]++;
                     ofs++;
                     pool[ofs] = s.jump / 256;
+                    modbits[ofs]++;
                     ofs++;
                     continue;
                 }
 
                 if (s.type == Section.RUN_SECTION) {
                     pool[ofs] = 76;
+                    modbits[ofs]++;
                     ofs++; //JMP
                     pool[ofs] = s.jump % 256;
+                    modbits[ofs]++;
                     ofs++;
                     pool[ofs] = s.jump / 256;
+                    modbits[ofs]++;
                     ofs++;
                 }
             }
@@ -878,6 +889,16 @@ static int[] moveblock = {
         }
         else {
             rs = new Section(736, 737, Section.RUN_SECTION, originalRunAdr);
+        }
+        
+        /*Overlap verification*/
+        int overlapCounter = 0;
+        for (int i=0;i<65536;i++) {
+            if (modbits[i]>0) overlapCounter++;
+        }
+        
+        if (overlapCounter>0) {
+            throw new AtariExecutableException("Sections of the binary file overlap. Unable to merge.");
         }
 
         /*Finalization*/
