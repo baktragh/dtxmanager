@@ -1,9 +1,12 @@
 package dtxmanager;
 
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
 import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -28,6 +31,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         this.jtbOriginal.getModel().addTableModelListener(this);
         this.jtbModified.getModel().addTableModelListener(this);
         updateEnableDisable();
+        updateTableFont(getNormalFont());
     }
 
     private void updateColumnParams() {
@@ -82,6 +86,8 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         mniLoad = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JSeparator();
         mniQuit = new javax.swing.JMenuItem();
+        mnuView = new javax.swing.JMenu();
+        jmiLargeFont = new javax.swing.JCheckBoxMenuItem();
         mnuProject = new javax.swing.JMenu();
         mniPurify = new javax.swing.JMenuItem();
         mniTurboVersion = new javax.swing.JMenuItem();
@@ -105,7 +111,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         mniAbout = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setTitle("DTX Manager 1.6");
+        setTitle("DTX Manager 1.7");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 onWindowClosing(evt);
@@ -132,7 +138,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         btnToModified.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnToModified.setText(">");
         btnToModified.setToolTipText("Add selected sections to the project");
-        btnToModified.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        btnToModified.setMargin(new java.awt.Insets(2, 8, 2, 8));
         btnToModified.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnToModifiedActionPerformed(evt);
@@ -143,14 +149,13 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 3.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         pOriginalCtrl.add(btnToModified, gridBagConstraints);
 
         btnReplaceByCode.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnReplaceByCode.setText("LD/ST>");
         btnReplaceByCode.setToolTipText("<html>\nAdd LDA/STA replacement of selected section to project<br>\nThis may be useful for replacing small sections at unwanted locations.<br>\nTo activate the replacement, make INIT jump to the first address of replacement<br>\n</html>");
-        btnReplaceByCode.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        btnReplaceByCode.setMargin(new java.awt.Insets(2, 8, 2, 8));
         btnReplaceByCode.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnReplaceByCodeActionPerformed(evt);
@@ -161,14 +166,13 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 3.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         pOriginalCtrl.add(btnReplaceByCode, gridBagConstraints);
 
         btnAddAll.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnAddAll.setText(">>");
         btnAddAll.setToolTipText("Add all sections to the project");
-        btnAddAll.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        btnAddAll.setMargin(new java.awt.Insets(2, 8, 2, 8));
         btnAddAll.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAddAllActionPerformed(evt);
@@ -179,14 +183,13 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 3.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         pOriginalCtrl.add(btnAddAll, gridBagConstraints);
 
         btnExportOrig.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnExportOrig.setText("EXP H-");
         btnExportOrig.setToolTipText("Export selected sections, only data without headers");
-        btnExportOrig.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        btnExportOrig.setMargin(new java.awt.Insets(2, 8, 2, 8));
         btnExportOrig.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnExportOrigActionPerformed(evt);
@@ -195,9 +198,8 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 3.0;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.2;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         pOriginalCtrl.add(btnExportOrig, gridBagConstraints);
@@ -205,7 +207,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         btnExportOrigHeader.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnExportOrigHeader.setText("EXP H+");
         btnExportOrigHeader.setToolTipText("<html>Export selected sections including<br>\nsection headers</html>");
-        btnExportOrigHeader.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        btnExportOrigHeader.setMargin(new java.awt.Insets(2, 8, 2, 8));
         btnExportOrigHeader.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnExportOrigHeaderActionPerformed(evt);
@@ -214,16 +216,15 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 3.0;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         pOriginalCtrl.add(btnExportOrigHeader, gridBagConstraints);
 
         btnOriginalComment.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnOriginalComment.setText("CMT");
         btnOriginalComment.setToolTipText("Add comment to the selected section");
-        btnOriginalComment.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        btnOriginalComment.setMargin(new java.awt.Insets(2, 8, 2, 8));
         btnOriginalComment.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnOriginalCommentActionPerformed(evt);
@@ -234,7 +235,6 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 3.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         pOriginalCtrl.add(btnOriginalComment, gridBagConstraints);
 
@@ -257,7 +257,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         btnRemove.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnRemove.setText("DEL");
         btnRemove.setToolTipText("Delete selected sections");
-        btnRemove.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        btnRemove.setMargin(new java.awt.Insets(2, 8, 2, 8));
         btnRemove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRemoveActionPerformed(evt);
@@ -266,7 +266,6 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
@@ -275,7 +274,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         btnUp.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnUp.setText("UP");
         btnUp.setToolTipText("<html>\nMove 1 section up<br>\nSHIFT - move 1 section 10 steps up<br>\n</html>");
-        btnUp.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        btnUp.setMargin(new java.awt.Insets(2, 8, 2, 8));
         btnUp.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnUpActionPerformed(evt);
@@ -284,16 +283,14 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         pModifiedCtrl.add(btnUp, gridBagConstraints);
 
         btnDown.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnDown.setText("DOWN");
         btnDown.setToolTipText("<html>\nMove 1 section down<br>\nSHIFT - move 1 section 10 steps down<br>\n</html>");
-        btnDown.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        btnDown.setMargin(new java.awt.Insets(2, 8, 2, 8));
         btnDown.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDownActionPerformed(evt);
@@ -302,16 +299,14 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         pModifiedCtrl.add(btnDown, gridBagConstraints);
 
         btnAdr.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnAdr.setText("ADR");
         btnAdr.setToolTipText("Change address of selected section");
-        btnAdr.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        btnAdr.setMargin(new java.awt.Insets(2, 8, 2, 8));
         btnAdr.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAdrActionPerformed(evt);
@@ -320,16 +315,14 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         pModifiedCtrl.add(btnAdr, gridBagConstraints);
 
         btnExportModif.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnExportModif.setText("EXP H-");
         btnExportModif.setToolTipText("Export selected sections without headers");
-        btnExportModif.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        btnExportModif.setMargin(new java.awt.Insets(2, 8, 2, 8));
         btnExportModif.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnExportModifActionPerformed(evt);
@@ -338,16 +331,14 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         pModifiedCtrl.add(btnExportModif, gridBagConstraints);
 
         btnExportModifHeader.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnExportModifHeader.setText("EXP H+");
         btnExportModifHeader.setToolTipText("Export selected sections with headers");
-        btnExportModifHeader.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        btnExportModifHeader.setMargin(new java.awt.Insets(2, 8, 2, 8));
         btnExportModifHeader.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnExportModifHeaderActionPerformed(evt);
@@ -356,16 +347,14 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         pModifiedCtrl.add(btnExportModifHeader, gridBagConstraints);
 
         btnImportRaw.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnImportRaw.setText("IMP H-");
         btnImportRaw.setToolTipText("Import section from file which contains raw data");
-        btnImportRaw.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        btnImportRaw.setMargin(new java.awt.Insets(2, 8, 2, 8));
         btnImportRaw.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnImportRawActionPerformed(evt);
@@ -374,16 +363,14 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         pModifiedCtrl.add(btnImportRaw, gridBagConstraints);
 
         btnImportHeadered.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnImportHeadered.setText("IMP H+");
         btnImportHeadered.setToolTipText("Import section or sections from file with section headers");
-        btnImportHeadered.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        btnImportHeadered.setMargin(new java.awt.Insets(2, 8, 2, 8));
         btnImportHeadered.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnImportHeaderedActionPerformed(evt);
@@ -392,16 +379,14 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         pModifiedCtrl.add(btnImportHeadered, gridBagConstraints);
 
         btnPlusRun.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnPlusRun.setText("+RUN");
         btnPlusRun.setToolTipText("<html>\nAdd RUN section<br>\nSHIFT - jump address will be set to the first selected section\n</html>");
-        btnPlusRun.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        btnPlusRun.setMargin(new java.awt.Insets(2, 8, 2, 8));
         btnPlusRun.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPlusRunActionPerformed(evt);
@@ -410,16 +395,14 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         pModifiedCtrl.add(btnPlusRun, gridBagConstraints);
 
         btnPlusInit.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnPlusInit.setText("+INIT");
         btnPlusInit.setToolTipText("<html>\nAdd INIT section<br>\nSHIFT - jump address will be set to the first selected section<br>\n</html>");
-        btnPlusInit.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        btnPlusInit.setMargin(new java.awt.Insets(2, 8, 2, 8));
         btnPlusInit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPlusInitActionPerformed(evt);
@@ -428,16 +411,14 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         pModifiedCtrl.add(btnPlusInit, gridBagConstraints);
 
         btnComment.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnComment.setText("CMT");
         btnComment.setToolTipText("Add comment to the selected section");
-        btnComment.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        btnComment.setMargin(new java.awt.Insets(2, 8, 2, 8));
         btnComment.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCommentActionPerformed(evt);
@@ -446,16 +427,14 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         pModifiedCtrl.add(btnComment, gridBagConstraints);
 
         btnClr.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnClr.setText("CLR");
         btnClr.setToolTipText("Clear all sections");
-        btnClr.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        btnClr.setMargin(new java.awt.Insets(2, 8, 2, 8));
         btnClr.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnClrActionPerformed(evt);
@@ -464,7 +443,6 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
@@ -473,7 +451,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         btnAddMove.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnAddMove.setText("+MVB");
         btnAddMove.setToolTipText("<html>\nAdd a section with subroutine that moves a memory block.<br>\nThe subroutine also disables ROM, so the block can be moved to RAM under ROM<br>\nSHIFT - preset the address textfields using address of the first selected section<br>\nTo activate the subroutine, add an INIT jump to first address of the subroutine\n</html>\n");
-        btnAddMove.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        btnAddMove.setMargin(new java.awt.Insets(2, 8, 2, 8));
         btnAddMove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAddMoveActionPerformed(evt);
@@ -482,16 +460,14 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         pModifiedCtrl.add(btnAddMove, gridBagConstraints);
 
         btnSplit.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         btnSplit.setText("SPL");
         btnSplit.setToolTipText("Split the first selected section");
-        btnSplit.setMargin(new java.awt.Insets(2, 4, 2, 4));
+        btnSplit.setMargin(new java.awt.Insets(2, 8, 2, 8));
         btnSplit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSplitActionPerformed(evt);
@@ -500,9 +476,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         pModifiedCtrl.add(btnSplit, gridBagConstraints);
 
@@ -519,7 +493,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
 
         mniLoad.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         mniLoad.setMnemonic('L');
-        mniLoad.setText("Load XEX to buffer");
+        mniLoad.setText("Load executable into buffer");
         mniLoad.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mniLoadActionPerformed(evt);
@@ -540,6 +514,19 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
 
         jMenuBar1.add(mnuFile);
 
+        mnuView.setMnemonic('V');
+        mnuView.setText("View");
+
+        jmiLargeFont.setText("Large font");
+        jmiLargeFont.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                onFontSizeChanged(evt);
+            }
+        });
+        mnuView.add(jmiLargeFont);
+
+        jMenuBar1.add(mnuView);
+
         mnuProject.setMnemonic('P');
         mnuProject.setText("Project");
         mnuProject.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
@@ -555,7 +542,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
 
         mniTurboVersion.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F11, 0));
         mniTurboVersion.setMnemonic('t');
-        mniTurboVersion.setText("Make monolithic binary...");
+        mniTurboVersion.setText("Make monolithic executable...");
         mniTurboVersion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 onMakeTurboVersion(evt);
@@ -583,7 +570,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
 
         mniExport.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         mniExport.setMnemonic('E');
-        mniExport.setText("Export project to XEX...");
+        mniExport.setText("Export project to executable...");
         mniExport.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mniExportActionPerformed(evt);
@@ -718,7 +705,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
     }//GEN-LAST:event_mniChangeMoveActionPerformed
 
     private void mniAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniAboutActionPerformed
-        JOptionPane.showMessageDialog(this, "<HTML>DTX Manager 1.6<BR>Interactive binary load file editor<BR>by BAKTRA Software</HTML>");
+        JOptionPane.showMessageDialog(this, "<HTML><B>DTX Manager 1.7</B><BR>Interactive Atari executable file editor<BR>by BAKTRA Software</HTML>");
 
     }//GEN-LAST:event_mniAboutActionPerformed
 
@@ -1462,6 +1449,29 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
 
     }//GEN-LAST:event_jmiReplaceRunInitActionPerformed
 
+    private void onFontSizeChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_onFontSizeChanged
+        
+        Font newFont;
+        
+        if (evt.getStateChange()==ItemEvent.DESELECTED) {
+            newFont = getNormalFont();
+        }
+        else {
+            newFont = getBigFont();
+        }
+        updateTableFont(newFont);
+    }//GEN-LAST:event_onFontSizeChanged
+
+    
+    private void updateTableFont(Font newFont) {
+        jtbOriginal.setFont(newFont);
+        jtbModified.setFont(newFont);
+        FontMetrics metrics = jtbOriginal.getFontMetrics(newFont);
+        int newRowHeight = metrics.getHeight() + 4; // Add padding for visual breathing room
+        jtbOriginal.setRowHeight(newRowHeight);
+        jtbModified.setRowHeight(newRowHeight);
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -1502,6 +1512,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
+    private javax.swing.JCheckBoxMenuItem jmiLargeFont;
     private javax.swing.JMenuItem jmiReplaceRunInit;
     private javax.swing.JMenuItem jmiSplitEvenly;
     private javax.swing.JSplitPane jsppSplitter;
@@ -1525,6 +1536,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
     private javax.swing.JMenu mnuHelp;
     private javax.swing.JMenu mnuProject;
     private javax.swing.JMenu mnuSection;
+    private javax.swing.JMenu mnuView;
     private javax.swing.JPanel pModified;
     private javax.swing.JPanel pModifiedCtrl;
     private javax.swing.JPanel pOriginal;
@@ -1666,7 +1678,7 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
     /**
      * Nastavi rozlozeni prvku podle konfigurace
      */
-    void setElementsLayout(int[] leftCols, int[] rightCols, int[] frameBounds, int dividerLocation) {
+    void setElementsLayout(int[] leftCols, int[] rightCols, int[] frameBounds, int dividerLocation,boolean bigFont) {
         for (int i = 0; i < 4; i++) {
             jtbOriginal.getColumnModel().getColumn(i).setPreferredWidth(leftCols[i]);
             jtbModified.getColumnModel().getColumn(i).setPreferredWidth(rightCols[i]);
@@ -1676,9 +1688,15 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         this.setBounds(bnds);
 
         jsppSplitter.setDividerLocation(dividerLocation);
+        
+        if (bigFont) {
+            updateTableFont(getBigFont());
+            jmiLargeFont.setSelected(bigFont);
+        }
+        
     }
 
-    void getElementsLayout(int[] leftCols, int[] rightCols, int[] frameBounds, int[] dividerLocation) {
+    void getElementsLayout(int[] leftCols, int[] rightCols, int[] frameBounds, int[] dividerLocation,int[] bigFont) {
         for (int i = 0; i < 4; i++) {
             leftCols[i] = jtbOriginal.getColumnModel().getColumn(i).getWidth();
             rightCols[i] = jtbModified.getColumnModel().getColumn(i).getWidth();
@@ -1691,6 +1709,36 @@ public class DtxFrame extends javax.swing.JFrame implements ListSelectionListene
         frameBounds[3] = (int) bnds.getHeight();
 
         dividerLocation[0] = jsppSplitter.getDividerLocation();
+        if (jmiLargeFont.isSelected()) {
+            bigFont[0]=1;
+        }
+        else {
+            bigFont[0]=0;
+        }
+    }
+    
+    
+    private Font normalFont=null;
+    private Font bigFont=null;
+    
+    private Font getNormalFont() {
+        
+        if (normalFont==null) {
+            normalFont = new Font("Monospaced", Font.PLAIN, 12);
+        }
+        
+        return normalFont;
+        
+    }
+    
+    private Font getBigFont() {
+        
+        if (bigFont==null) {
+            bigFont = new Font("Monospaced", Font.PLAIN, 16);
+        }
+        
+        return bigFont;
+        
     }
 
 }

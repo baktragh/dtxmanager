@@ -45,10 +45,10 @@ public class MakeMonolithicDialog extends javax.swing.JDialog {
         jlbLength = new javax.swing.JLabel();
         pFiller = new javax.swing.JPanel();
 
-        setTitle("Monolithic binary file");
+        setTitle("Create monolithic executable");
         setModal(true);
 
-        btnOk.setText("Make monolithic binary");
+        btnOk.setText("Make monolithic executable");
         btnOk.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 OnMakeTurboVersion(evt);
@@ -190,14 +190,14 @@ public class MakeMonolithicDialog extends javax.swing.JDialog {
         }
 
         try {
-            DtxManager.ae2.makeMonolithicBinary(eadr, b, s);
+            DtxManager.ae2.makeMonolithic(eadr, b, s);
         }
         catch (Exception e) {
             warning(e);
             return;
         }
 
-        JOptionPane.showMessageDialog(this, "Done OK. Test the monolithic binary.");
+        JOptionPane.showMessageDialog(this, "Creation complete. Test the monolithic executable.");
 
     }//GEN-LAST:event_OnMakeTurboVersion
 

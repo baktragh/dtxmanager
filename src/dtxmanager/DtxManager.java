@@ -140,6 +140,7 @@ public class DtxManager {
         int[] frameBounds = new int[4];
 
         String[] fcs = new String[4];
+        boolean bigFont = false;
 
         RandomAccessFile raf = null;
 
@@ -151,14 +152,18 @@ public class DtxManager {
                 frameBounds[i] = raf.readInt();
             }
             dividerLocation = raf.readInt();
+            bigFont=(raf.readInt()!=0);
+
             for (int i = 0; i < 4; i++) {
                 fcs[i] = raf.readUTF();
             }
+            
 
             raf.close();
         }
         catch (Exception e) {
             /*Intentionally empty*/
+            
             try {
                 raf.close();
             }
@@ -169,11 +174,12 @@ public class DtxManager {
         }
 
         /*Apply the layout data*/
-        frmDtx.setElementsLayout(leftCols, rightCols, frameBounds, dividerLocation);
+        frmDtx.setElementsLayout(leftCols, rightCols, frameBounds, dividerLocation,bigFont);
         setChooserFile(fcXex, fcs[0]);
         setChooserFile(fcModXex, fcs[1]);
         setChooserFile(fcSection, fcs[2]);
         setChooserFile(fcProject, fcs[3]);
+        
     }
 
     public static void saveLayout() {
@@ -183,10 +189,11 @@ public class DtxManager {
 
         int[] dividerLocation = new int[1];
         int[] frameBounds = new int[4];
+        int[] bigFont = new int[1];
 
         RandomAccessFile raf = null;
 
-        frmDtx.getElementsLayout(leftCols, rightCols, frameBounds, dividerLocation);
+        frmDtx.getElementsLayout(leftCols, rightCols, frameBounds, dividerLocation,bigFont);
 
         try {
             raf = new RandomAccessFile(configFile, "rw");
@@ -198,6 +205,7 @@ public class DtxManager {
                 raf.writeInt(frameBounds[i]);
             }
             raf.writeInt(dividerLocation[0]);
+            raf.writeInt(bigFont[0]);
 
             raf.writeUTF(getFileFromChooser(fcXex));
             raf.writeUTF(getFileFromChooser(fcModXex));
@@ -208,6 +216,7 @@ public class DtxManager {
         }
         catch (Exception e) {
             /*Intentianally empty*/
+            
             try {
                 raf.close();
             }

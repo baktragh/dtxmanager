@@ -26,7 +26,7 @@ class AtariExecutableException extends Exception {
 }
 
 /**
- * Atari DOS II 2.0 binary load file
+ * Atari Executable
  */
 public class AtariExecutable extends AbstractTableModel {
 
@@ -87,7 +87,7 @@ public class AtariExecutable extends AbstractTableModel {
     }
 
     /**
-     * Analyze the binary load file
+     * Analyze the executable
      *
      * @throws IOException,AtariExecutableException
      */
@@ -98,11 +98,11 @@ public class AtariExecutable extends AbstractTableModel {
 
         /*Check for 16 MB*/
         if (raf.length() > 16 * 1024 * 1024) {
-            throw new AtariExecutableException("Binary load file exceeds 16 MB");
+            throw new AtariExecutableException("The input file size exceeds 16 MB");
         }
 
         if (raf.length() < 3) {
-            throw new AtariExecutableException("Binary load file is too small to be a binary load file");
+            throw new AtariExecutableException("The input file size is smaller than minimu size of an Atari executable");
         }
 
         /*Get all the data from the file as array of integers*/
@@ -239,7 +239,7 @@ public class AtariExecutable extends AbstractTableModel {
     }
 
     /**
-     * List binary load file to the standard output
+     * List the executable to the standard output
      */
     void listToConsole() {
         for (int i = 0; i < allSections.size(); i++) {
@@ -754,9 +754,9 @@ static int[] moveblock = {
     }
 
     /**
-     * Create monolithic binary
+     * Create monolithic executable
      */
-    public void makeMonolithicBinary(int extraAddress, boolean extraCode, String outFile) throws AtariExecutableException {
+    public void makeMonolithic(int extraAddress, boolean extraCode, String outFile) throws AtariExecutableException {
 
         int originalRunAdr = -1;
 
@@ -898,7 +898,7 @@ static int[] moveblock = {
         }
         
         if (overlapCounter>0) {
-            throw new AtariExecutableException("Sections of the binary file overlap. Unable to merge.");
+            throw new AtariExecutableException("Sections of the executable file overlap. Unable to merge.");
         }
 
         /*Finalization*/
